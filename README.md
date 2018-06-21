@@ -1,1 +1,1 @@
-本库分享了用tensorflow实现
+本库分享了用tensorflow实现的一些模型，采用CIFAR-10或ImageNet等大型数据集。
