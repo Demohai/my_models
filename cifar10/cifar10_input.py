@@ -1,5 +1,3 @@
-# cifar10的原始数据二进制文件格式
-
 import os
 import tensorflow as tf
 
@@ -31,8 +29,9 @@ def read_cifar10(filename_queue):
     """
 
     # See http://www.cs.toronto.edu/~kriz/cifar.html for a description of the input format
-    class CIFARRecord(object):
-        def __init__(self, height=32, width=32, depth=3, key=False, unit8image=tf.zeros((32, 32, 3)), label=tf.zeros((1))):
+    class CIFAR10Record(object):
+        def __init__(self, height=32, width=32, depth=3, key=False,
+                     unit8image=tf.zeros((32, 32, 3)), label=tf.zeros(1)):
             self.height = height
             self.width = width
             self.depth = depth
@@ -69,6 +68,7 @@ def read_cifar10(filename_queue):
 
     return result
 
+
 def generate_image_and_label_batch(image, label, min_queue_examples, batch_size, shuffle):
     """Construct a queued batch of images and labels
     Args:
@@ -102,8 +102,9 @@ def generate_image_and_label_batch(image, label, min_queue_examples, batch_size,
             capacity=min_queue_examples + 3 * batch_size
         )
     # Display the training images in the visualizer
-    tf.summary.image('images', images)
+    tf.summary.image('images', images_batch)
     return images_batch, tf.reshape(label_batch, [batch_size])
+
 
 def train_inputs(data_dir, batch_size):
     """Construct distorted input for CIFAR training using Reader ops
@@ -118,7 +119,7 @@ def train_inputs(data_dir, batch_size):
     """
     # Create filenames list
     filenames = [os.path.join(data_dir, 'data_batch_%d.bin' % i)
-                 for i in xrange(1, 6)]
+                 for i in range(1, 6)]
 
     for f in filenames:
         if not tf.gfile.Exists(f):
@@ -166,6 +167,7 @@ def train_inputs(data_dir, batch_size):
     return generate_image_and_label_batch(float_image, read_input.label, min_queue_examples,
                                           batch_size, shuffle=True)
 
+
 def eval_inputs(data_dir, batch_size):
     """Construct input for CIFAR evaluation using the Reader ops
     Args:
@@ -208,7 +210,3 @@ def eval_inputs(data_dir, batch_size):
 
     return generate_image_and_label_batch(float_image, read_input.label, min_queue_examples,
                                           batch_size, shuffle=False)
-
-
-
-
