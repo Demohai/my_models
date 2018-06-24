@@ -31,12 +31,12 @@ def read_cifar10(filename_queue):
     # See http://www.cs.toronto.edu/~kriz/cifar.html for a description of the input format
     class CIFAR10Record(object):
         def __init__(self, height=32, width=32, depth=3, key=False,
-                     unit8image=tf.zeros((32, 32, 3)), label=tf.zeros(1)):
+                     uint8image=tf.zeros((32, 32, 3)), label=tf.zeros(1)):
             self.height = height
             self.width = width
             self.depth = depth
             self.key = key
-            self.unit8image = unit8image
+            self.uint8image = uint8image
             self.label = label
 
     result = CIFAR10Record()
@@ -64,7 +64,7 @@ def read_cifar10(filename_queue):
     )
 
     # Convert from [depth, height, width] to [height, width, depth]
-    result.unit8image = tf.transpose(depth_major, [1, 2, 0])
+    result.uint8image = tf.transpose(depth_major, [1, 2, 0])
 
     return result
 
@@ -130,7 +130,7 @@ def train_inputs(data_dir, batch_size):
 
     # Read examples from files in the filename queue
     read_input = read_cifar10(filename_queue)
-    image_input = tf.cast(read_input.unit8image, tf.float32)
+    image_input = tf.cast(read_input.uint8image, tf.float32)
 
     height = IMAGE_SIZE
     width = IMAGE_SIZE
@@ -153,7 +153,7 @@ def train_inputs(data_dir, batch_size):
     # Subtract off the mean and divide by the variance of the pixels
     float_image = tf.image.per_image_standardization(distorted_image)
 
-    # Set the shapes of tensors
+    # Set the shapes of tensors before make the data into batch
     float_image.set_shape([height, width, 3])
     read_input.label.set_shape([1])
 
@@ -195,11 +195,12 @@ def eval_inputs(data_dir, batch_size):
 
     # Image processing for evaluation
     # Crop the central [height, width] of the image
-    resized_image = tf.image_resize_image_with_crop_or_pad(reshaped_image, height, width)
+    resized_image = tf.image.resize_image_with_crop_or_pad(reshaped_image, height, width)
 
     float_image = tf.image.per_image_standardization(resized_image)
 
     float_image.set_shape([height, width, 3])
+    read_input.label.set_shape([1])
 
     # Ensure that the random shuffling has good mixing properties
     min_fraction_of_examples_in_queue = 0.4

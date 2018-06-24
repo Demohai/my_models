@@ -15,8 +15,9 @@ with tf.Session() as sess:
     threads = tf.train.start_queue_runners(coord=coord)  # 启动QueueRunner，此时文件名队列已经进队
 
     images, label = sess.run([images_batch, label_batch])
-    print(images)
+    # print(images)
     print(np.shape(images))
+    print(np.shape(label))
 
     coord.request_stop()
     coord.join(threads)

@@ -8,7 +8,7 @@ import cifar10_download
 
 # Global constants describing the cifar-10 data set
 IMAGE_SIZE = cifar10_input.IMAGE_SIZE
-NUM_CLASSES = cifar10_input.IMAGE_SIZE
+NUM_CLASSES = cifar10_input.NUM_CLASSES
 NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN = cifar10_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN
 NUM_EXAMPLES_PER_EPOCH_FOR_EVAL = cifar10_input.NUM_EXAMPLES_PER_EPOCH_FOR_EVAL
 
@@ -55,7 +55,7 @@ def _variable_initializer(name, shape, initializer):
     Returns:
         variable tensor
     """
-    with tf.device('cpu:0'):
+    with tf.device('/cpu:0'):
         var = tf.get_variable(name, shape, initializer=initializer)
 
     return var

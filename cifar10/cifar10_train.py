@@ -15,14 +15,14 @@ def train():
 
     # Get images and labels for the cifar10
     data_dir = os.path.join(FLAGS.data_dir, 'cifar-10-batches-bin')
-    images, labels = cifar10_input.train_inputs(data_dir, FLAGS.batch_size)
+    images_batch, labels_batch = cifar10_input.train_inputs(data_dir, FLAGS.batch_size)
 
     # Build a Graph that computes the logits predictions from the
     # inference model
-    logits = cifar10.inference(images)
+    logits = cifar10.inference(images_batch)
 
     # Compute loss
-    loss = cifar10.loss(logits, labels)
+    loss = cifar10.loss(logits, labels_batch)
 
     # Build a Graph that trains the model with one batch of examples and
     # updates the model parameters
@@ -54,7 +54,7 @@ def train():
                                     examples_per_sec, sec_per_batch))
 
     with tf.train.MonitoredTrainingSession(
-        checkpoint_dir=FLAGS.train_dir,
+        checkpoint_dir=FLAGS.checkpoint_dir,
         hooks=[tf.train.StopAtStepHook(last_step=FLAGS.max_steps),
                tf.train.NanTensorHook(loss),
                _LoggerHook()],
@@ -66,9 +66,9 @@ def train():
 
 def main(_):
     cifar10_download.download_data()
-    if tf.gfile.Exists(FLAGS.train_dir):
-        tf.gfile.DeleteRecursively(FLAGS.train_dir)
-    tf.gfile.MakeDirs(FLAGS.train_dir)
+    if tf.gfile.Exists(FLAGS.checkpoint_dir):
+        tf.gfile.DeleteRecursively(FLAGS.checkpoint_dir)
+    tf.gfile.MakeDirs(FLAGS.checkpoint_dir)
     train()
 
 
